@@ -6,15 +6,27 @@ const app = express();
 app.listen(5100);
 
 app.get(`/api/currency/render`, async function(req, res) {
-  
-  const html = req.query.html;
+  const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [] } = req.query;
   const image = await nodeHtmlToImage({
-    html: html,
+    html,
+    type,
+    quality,
+    content,
+    encoding,
+    selector,
     puppeteerArgs: {
-      args: ['--no-sandbox']
+      args: ['--no-sandbox', ...puppeteerArgs]
     }
   });
+
   console.log('IMAGE GENERATED');
-  res.writeHead(200, { 'Content-Type': 'image/png' });
-  res.end(image, 'binary');
+  
+  if (encoding === 'binary') {
+    console.log('SENT BINARY IMAGE');
+    res.writeHead(200, { 'Content-Type': 'image/' + type });
+    res.end(image, encoding);
+  } else {
+    console.log('SENT BASE64 IMAGE');
+    res.send(image);
+  }
 });
