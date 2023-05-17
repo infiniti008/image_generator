@@ -3,10 +3,14 @@ const nodeHtmlToImage = require('node-html-to-image');
 
 const app = express();
 
+app.use(express.json());
+
 app.listen(5100);
 
-app.get(`/api/currency/render`, async function(req, res) {
-  const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [] } = req.query;
+app.post('/api/render', async function(req, res) {
+  console.log('START GENERATING');
+  const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [] } = req.body.data;
+  
   const image = await nodeHtmlToImage({
     html,
     type,
