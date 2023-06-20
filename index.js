@@ -18,6 +18,7 @@ app.post('/api/render', async function(req, res) {
       quality,
       content,
       encoding,
+      waitUntil: ['domcontentloaded', 'networkidle0'],
       selector,
       puppeteerArgs: {
         args: ['--no-sandbox', ...puppeteerArgs]
