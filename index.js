@@ -6,7 +6,7 @@ dotenv.config({
 import express from 'express';
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
-// import { postToInstagramStories } from'./postToInstagramStories.js';
+import { postToInstagramStories } from'./postToInstagramStories.js';
 
 const app = express();
 
@@ -39,9 +39,6 @@ app.post('/api/render', async function(req, res) {
     if (shouldSaveToMediaFolder) {
       fs.writeFileSync(process.env.mediaFolderPath + imagePath, image, encoding === 'base64' ? 'base64' : '');
       console.log('IMAGE SAVED TO SHARED MEDIA FOLDER');
-    }
-
-    if (shouldSaveToMediaFolder) {
       res.json({ imagePath });
       return;
     }
@@ -56,5 +53,18 @@ app.post('/api/render', async function(req, res) {
     }
   } catch (err) {
     console.log(err);
+  }
+});
+
+app.post('/api/send-stories', async function(req, res) {
+  try {
+    const { content } = req.body.data;
+    
+    await postToInstagramStories(content);
+
+    res.json({ status: true });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: false });
   }
 });
