@@ -20,7 +20,10 @@ async function runInstagram(content) {
     const { cookiesPath } = variablesByCountry[content.country];
     console.log('START');
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox']
+    });
     const page = await browser.newPage();
 
     const m = puppeteer.devices['iPhone 12 Pro'];
