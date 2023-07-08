@@ -15,12 +15,14 @@ const variablesByCountry = {
   }
 }
 
+let browser = null;
+
 async function runInstagram(content) {
   try {
     const { cookiesPath } = variablesByCountry[content.country];
     console.log('START');
 
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox']
     });
@@ -37,7 +39,7 @@ async function runInstagram(content) {
       await page.setCookie(...savedCookiesPL);
       console.log('SUCCESS: SET COOKIES');
     } catch(err) {
-      console.log(err);
+      console.log(err.message);
       console.log('ERROR: SET COOKIES');
     }
     console.log('COMPLET: SET COOKIES');
@@ -55,7 +57,7 @@ async function runInstagram(content) {
       await page.waitForSelector(selectorAddContent, { timeout: 6000 });
       isLoggedInByCookies = true;
     } catch(err) {
-      console.log(err);
+      console.log(err.message);
     }
     console.log('COMPLET: CHECK LOGIN - ', isLoggedInByCookies);
 
@@ -95,6 +97,18 @@ async function runInstagram(content) {
       const selectorButtonLogIn = 'button[type="submit"]';
       await page.click(selectorButtonLogIn);
       console.log('COMPLET: FILL LOG IN FORM');
+
+      
+      console.log('WAITING: CLICK SAVE INFO TO LOGIN');
+      try {
+        await page.waitForXPath('//*[contains(text(), "Save Info")]', { timeout: 6000 });
+        await page.keyboard.press('Tab');
+        await page.keyboard.press('Enter');
+      } catch (err) {
+        console.log('ERROR: CLICK SAVE INFO TO LOGIN');
+        console.log(err.message);
+      }
+      console.log('COMPLET: CLICK SAVE INFO TO LOGIN');
 
 
       console.log('WAITING: CHECK LOGIN AFTER LOGIN');
@@ -147,9 +161,11 @@ async function runInstagram(content) {
 
 
     await browser.close();
+    browser = null;
   } catch(err) {
     console.log(err);
     await browser.close();
+    browser = null;
   }
 }
 
