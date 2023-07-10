@@ -20,7 +20,6 @@ let browser = null;
 async function runInstagram(content) {
   try {
     const { cookiesPath } = variablesByCountry[content.country];
-    console.log('START');
 
     browser = await puppeteer.launch({
       headless: true,
@@ -58,14 +57,21 @@ async function runInstagram(content) {
       isLoggedInByCookies = true;
     } catch(err) {
       console.log(err.message);
+      await takeScreenshot(page, 1000);
     }
     console.log('COMPLET: CHECK LOGIN - ', isLoggedInByCookies);
 
 
     if (!isLoggedInByCookies) {
-      console.log('WAITING: COOCKIE SELECTOR');
       const selectorCoockieDialog = 'div[role="dialog"]';
-      await page.waitForSelector(selectorCoockieDialog);
+
+      console.log('WAITING: COOCKIE SELECTOR');
+      try {
+        await page.waitForSelector(selectorCoockieDialog, { timeout: 6000 });
+      } catch(err) {
+        console.log(err.message);
+        await takeScreenshot(page, 1000);
+      }
       console.log('COMPLET: COOCKIE SELECTOR');
 
 
@@ -107,6 +113,7 @@ async function runInstagram(content) {
       } catch (err) {
         console.log('ERROR: CLICK SAVE INFO TO LOGIN');
         console.log(err.message);
+        await takeScreenshot(page, 1000);
       }
       console.log('COMPLET: CLICK SAVE INFO TO LOGIN');
 
@@ -118,9 +125,16 @@ async function runInstagram(content) {
         isLoggedInByLogin = true;
       } catch(err) {
         console.log(err);
+        await takeScreenshot(page, 1000);
       }
       console.log('COMPLET: CHECK LOGIN AFTER LOGIN - ', isLoggedInByLogin);
     }
+
+
+    console.log('WAITING: SAVE COOKIES');
+    const cookies = await page.cookies();   
+    fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
+    console.log('COMPLET: SAVE COOKIES');
 
 
     console.log('WAITING: PRESS ADD STORY');
@@ -146,27 +160,28 @@ async function runInstagram(content) {
     console.log('COMPLET: SEND STORY');
 
 
-    console.log('WAITING: SAVE COOKIES');
-    const cookies = await page.cookies();   
-    fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
-    console.log('COMPLET: SAVE COOKIES');
-
-
-    // console.log('WAITING: TAKE A SCREENSHOT');
-    // await page.waitForTimeout(5000);
-    // await page.screenshot({
-    //   path: './img.png'
-    // });
-    // console.log('COMPLET: TAKE A SCREENSHOT');
+    // await takeScreenshot(page, 5000);
 
 
     await browser.close();
     browser = null;
   } catch(err) {
     console.log(err);
+
+    // await takeScreenshot(page, 5000);
+
     await browser.close();
     browser = null;
   }
+}
+
+async function takeScreenshot(page, delay = 3000) {
+  console.log('WAITING: TAKE A SCREENSHOT');
+    await page.waitForTimeout(delay);
+    await page.screenshot({
+      path: process.env.mediaFolderPath + '/images/screenshot-' + new Date().toISOString() + '.png'
+    });
+    console.log('COMPLET: TAKE A SCREENSHOT');
 }
 
 export async function postToInstagramStories(content) {

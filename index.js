@@ -16,6 +16,7 @@ app.listen(5100);
 
 app.post('/api/render', async function(req, res) {
   try {
+    console.log('====================================');
     console.log('START GENERATING');
     const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [], shouldSaveToMediaFolder = true } = req.body.data;
     
@@ -53,6 +54,8 @@ app.post('/api/render', async function(req, res) {
     }
   } catch (err) {
     console.log(err);
+  } finally {
+    console.log('====================================');
   }
 });
 
