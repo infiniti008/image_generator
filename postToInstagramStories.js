@@ -188,7 +188,7 @@ export async function postToInstagramStories(content) {
   try {
     console.log('====================================');
     console.log('START: POSTING TO INSTAGRAM STORIES');
-    // console.log(content);
+    console.log(`[ Country = ${content.country} ] [ Name = ${content.name} ] [ File Name = ${content.fileName} ]`);
     
     await runInstagram(content);
 
