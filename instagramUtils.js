@@ -5,6 +5,7 @@ dotenv.config({
 
 const env = process.env.environment || 'prod';
 const executablePath = process.env['executablePath_' + env];
+const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
 import fs from 'fs';
 import puppeteer from 'puppeteer';
@@ -33,7 +34,7 @@ export async function removeCookies(content) {
 export async function takeScreenshot(page, delay = 3000) {
   console.log('WAITING: TAKE A SCREENSHOT');
   const screenshotPath = env === 'prod' 
-    ? process.env.mediaFolderPath + '/images/screenshot-' + new Date().toISOString() + '.png' 
+    ? mediaFolderPath + '/images/screenshot-' + new Date().toISOString() + '.png' 
     : 'img.png';
   await page.waitForTimeout(delay);
   await page.screenshot({

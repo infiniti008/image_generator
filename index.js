@@ -3,6 +3,9 @@ dotenv.config({
   path: './.env'
 });
 
+const env = process.env.environment || 'prod';
+const mediaFolderPath = process.env['mediaFolderPath_' + env];
+
 import express from 'express';
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
@@ -40,7 +43,7 @@ app.post('/api/render', async function(req, res) {
     const imagePath = '/images/' + content.fileName + '.png';
 
     if (shouldSaveToMediaFolder) {
-      fs.writeFileSync(process.env.mediaFolderPath + imagePath, image, encoding === 'base64' ? 'base64' : '');
+      fs.writeFileSync(mediaFolderPath + imagePath, image, encoding === 'base64' ? 'base64' : '');
       console.log('IMAGE SAVED TO SHARED MEDIA FOLDER');
       res.json({ imagePath });
       return;

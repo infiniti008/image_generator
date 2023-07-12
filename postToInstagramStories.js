@@ -2,7 +2,8 @@ import * as dotenv from 'dotenv';
 dotenv.config({
   path: './.env'
 });
-
+const env = process.env.environment || 'prod';
+const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
 import { launch, logIn, removeCookies, takeScreenshot } from './instagramUtils.js';
 
@@ -37,7 +38,7 @@ async function runInstagram(content) {
       page.waitForFileChooser(),
       parentElement.click(),
     ]);
-    await fileChooser.accept([process.env.mediaFolderPath + content.imagePath]);
+    await fileChooser.accept([mediaFolderPath + content.imagePath]);
     console.log('COMPLET: PRESS ADD STORY');
 
 

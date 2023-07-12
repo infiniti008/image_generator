@@ -3,6 +3,9 @@ dotenv.config({
   path: './.env'
 });
 
+const env = process.env.environment || 'prod';
+const mediaFolderPath = process.env['mediaFolderPath_' + env];
+
 import { logIn, removeCookies, takeScreenshot, variablesByCountry, launch } from './instagramUtils.js';
 
 let browser = null;
@@ -71,7 +74,7 @@ async function runInstagram(content) {
         page.waitForFileChooser(),
         buttonSelectFromComputer.click()
       ]);
-      await fileChooser.accept([process.env.mediaFolderPath + content.videoPath]);
+      await fileChooser.accept([mediaFolderPath + content.videoPath]);
     }
     console.log('COMPLET: ADD FILE');
 
