@@ -59,9 +59,9 @@ app.post('/api/render', async function(req, res) {
     }
   } catch (err) {
     console.log(err);
+    res.json({ status: false });
   } finally {
     console.log('====================================');
-    res.json({ status: false });
   }
 });
 
