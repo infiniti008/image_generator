@@ -61,6 +61,7 @@ app.post('/api/render', async function(req, res) {
     console.log(err);
   } finally {
     console.log('====================================');
+    res.json({ status: false });
   }
 });
 
