@@ -7,6 +7,7 @@ import express from 'express';
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import { postToInstagramStories } from'./postToInstagramStories.js';
+import { postToInstagramReels } from './postToInstagramPost.js';
 
 const app = express();
 
@@ -16,9 +17,10 @@ app.listen(5100);
 
 app.post('/api/render', async function(req, res) {
   try {
-    console.log('====================================');
-    console.log('START GENERATING');
     const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [], shouldSaveToMediaFolder = true } = req.body.data;
+    const contentPrint = `[ ${content.time} ] [ ${content.country} ] [ ${content.name} ] [ Template: ${content.template} ]`;
+    console.log('====================================');
+    console.log('START GENERATING: ' + contentPrint);
     
     const image = await nodeHtmlToImage({
       html,
@@ -63,9 +65,22 @@ app.post('/api/send-stories', async function(req, res) {
   try {
     const { content } = req.body.data;
     
-    await postToInstagramStories(content);
+    const status = await postToInstagramStories(content);
 
-    res.json({ status: true });
+    res.json({ status });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: false });
+  }
+});
+
+app.post('/api/send-reels', async function(req, res) {
+  try {
+    const { content } = req.body.data;
+    
+    const status = await postToInstagramReels(content);
+
+    res.json({ status });
   } catch (err) {
     console.log(err);
     res.json({ status: false });
