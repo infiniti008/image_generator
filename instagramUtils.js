@@ -1,3 +1,11 @@
+import * as dotenv from 'dotenv';
+dotenv.config({
+  path: './.env'
+});
+
+const env = process.env.environment || 'prod';
+const executablePath = process.env['executablePath_' + env];
+
 import fs from 'fs';
 import puppeteer from 'puppeteer';
 
@@ -24,12 +32,14 @@ export async function removeCookies(content) {
 
 export async function takeScreenshot(page, delay = 3000) {
   console.log('WAITING: TAKE A SCREENSHOT');
-  // const screenshotPath = process.env.mediaFolderPath + '/images/screenshot-' + new Date().toISOString() + '.png';
-  const screenshotPath = 'img.png';
+  const screenshotPath = env === 'prod' 
+    ? process.env.mediaFolderPath + '/images/screenshot-' + new Date().toISOString() + '.png' 
+    : 'img.png';
   await page.waitForTimeout(delay);
   await page.screenshot({
     path: screenshotPath
   });
+  console.log('SCREENSHOT PATH: ' + screenshotPath);
   console.log('COMPLET: TAKE A SCREENSHOT');
 }
 
@@ -37,7 +47,7 @@ export async function launch() {
   console.log('WAITING: LAUNCH BROWSER');
   try {
     const browser = await puppeteer.launch({
-      executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+      executablePath,
       headless: true,
       args: ['--no-sandbox', '--lang=en-US']
     });
