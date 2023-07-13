@@ -135,13 +135,13 @@ async function runInstagram(content) {
     console.log('COMPLET: FILL TITLE AND DESCRIPTION');
 
 
-    // console.log('WAITING: CLICK SHARE BUTTON');
-    // await page.waitForTimeout(1000);
-    // const [buttonShare] = await page.$x("//div[contains(., 'Share')] [@role='button']");
-    // if (buttonShare) {
-    //   await buttonShare.click();
-    // }
-    // console.log('COMPLET: CLICK SHARE BUTTON');
+    console.log('WAITING: CLICK SHARE BUTTON');
+    await page.waitForTimeout(1000);
+    const [buttonShare] = await page.$x("//div[contains(., 'Share')] [@role='button']");
+    if (buttonShare) {
+      await buttonShare.click();
+    }
+    console.log('COMPLET: CLICK SHARE BUTTON');
 
 
     await takeScreenshot(page, 5000);
