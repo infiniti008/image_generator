@@ -3,22 +3,29 @@ dotenv.config({
   path: './.env'
 });
 
+const env = process.env.environment || 'prod';
+const mediaFolderPath = process.env['mediaFolderPath_' + env];
+
 import express from 'express';
 import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import { postToInstagramStories } from'./postToInstagramStories.js';
+import { postToInstagramReels } from './postToInstagramPost.js';
 
 const app = express();
 
 app.use(express.json());
 
-app.listen(5100);
+app.listen(5100, () => {
+  console.log('APP LISTEN INTERNAL PORT: 5100');
+});
 
 app.post('/api/render', async function(req, res) {
   try {
-    console.log('====================================');
-    console.log('START GENERATING');
     const { html, type = 'png', quality, content, encoding = 'binary', selector, puppeteerArgs = [], shouldSaveToMediaFolder = true } = req.body.data;
+    const contentPrint = `[ ${content.time} ] [ ${content.country} ] [ ${content.name} ] [ Template: ${content.template} ]`;
+    console.log('====================================');
+    console.log('START GENERATING: ' + contentPrint);
     
     const image = await nodeHtmlToImage({
       html,
@@ -38,7 +45,7 @@ app.post('/api/render', async function(req, res) {
     const imagePath = '/images/' + content.fileName + '.png';
 
     if (shouldSaveToMediaFolder) {
-      fs.writeFileSync(process.env.mediaFolderPath + imagePath, image, encoding === 'base64' ? 'base64' : '');
+      fs.writeFileSync(mediaFolderPath + imagePath, image, encoding === 'base64' ? 'base64' : '');
       console.log('IMAGE SAVED TO SHARED MEDIA FOLDER');
       res.json({ imagePath });
       return;
@@ -54,6 +61,7 @@ app.post('/api/render', async function(req, res) {
     }
   } catch (err) {
     console.log(err);
+    res.json({ status: false });
   } finally {
     console.log('====================================');
   }
@@ -63,9 +71,22 @@ app.post('/api/send-stories', async function(req, res) {
   try {
     const { content } = req.body.data;
     
-    await postToInstagramStories(content);
+    const status = await postToInstagramStories(content);
 
-    res.json({ status: true });
+    res.json({ status });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: false });
+  }
+});
+
+app.post('/api/send-reels', async function(req, res) {
+  try {
+    const { content } = req.body.data;
+    
+    const status = await postToInstagramReels(content);
+
+    res.json({ status });
   } catch (err) {
     console.log(err);
     res.json({ status: false });
