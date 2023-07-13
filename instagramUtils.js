@@ -127,7 +127,6 @@ export async function logIn(page, content) {
       const [buttonAcceptCookies] = await page.$x('//button[contains(text(), "Allow all cookies")]');
       if (buttonAcceptCookies) {
         await buttonAcceptCookies.click();
-        await page.waitForSelector(selectorUserNameInput);
       }
       await page.waitForFunction((selectorCoockieDialog) => !document.querySelector(selectorCoockieDialog), {}, selectorCoockieDialog);
     } catch (err) {
