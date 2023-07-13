@@ -109,26 +109,13 @@ export async function logIn(page, content) {
 
 
   if (!isLoggedInByCookies) {
-    const selectorCoockieDialog = 'div[role="dialog"]';
-
-    console.log('WAITING: COOCKIE SELECTOR');
-    try {
-      await page.waitForSelector(selectorCoockieDialog, { timeout: 6000 });
-    } catch(err) {
-      console.log(err.message);
-      await takeScreenshot(page, 1000);
-    }
-    console.log('COMPLET: COOCKIE SELECTOR');
-
-
     console.log('WAITING: CLICK ACEPT COOCKIE BUTTON');
     try {
-      await page.waitForXPath('//button[contains(text(), "Allow all cookies")]', { timeout: 3000 });
-      const [buttonAcceptCookies] = await page.$x('//button[contains(text(), "Allow all cookies")]');
+      await page.waitForXPath('//*[contains(text(), "Allow all cookies")]', { timeout: 6000 });
+      const [buttonAcceptCookies] = await page.$x('//*[contains(text(), "Allow all cookies")]');
       if (buttonAcceptCookies) {
         await buttonAcceptCookies.click();
       }
-      await page.waitForFunction((selectorCoockieDialog) => !document.querySelector(selectorCoockieDialog), {}, selectorCoockieDialog);
     } catch (err) {
       console.log(err?.message);
     }
