@@ -42,12 +42,12 @@ async function runInstagram(content) {
     console.log('COMPLET: PRESS ADD STORY');
 
 
-    // console.log('WAITING: SEND STORY');
-    // const selectorButtonSubmitStroy = 'span[aria-label="Add to your story"]';
-    // await page.waitForSelector(selectorButtonSubmitStroy, { timeout: 6000 });
-    // await page.click(selectorButtonSubmitStroy);
-    // await page.waitForSelector(selectorAddContent, { timeout: 20000 });
-    // console.log('COMPLET: SEND STORY');
+    console.log('WAITING: SEND STORY');
+    const selectorButtonSubmitStroy = 'span[aria-label="Add to your story"]';
+    await page.waitForSelector(selectorButtonSubmitStroy, { timeout: 6000 });
+    await page.click(selectorButtonSubmitStroy);
+    await page.waitForSelector(selectorAddContent, { timeout: 20000 });
+    console.log('COMPLET: SEND STORY');
 
 
     await takeScreenshot(page, 5000);
