@@ -16,7 +16,9 @@ const app = express();
 
 app.use(express.json());
 
-app.listen(5100);
+app.listen(5100, () => {
+  console.log('APP LISTEN INTERNAL PORT: 5100');
+});
 
 app.post('/api/render', async function(req, res) {
   try {
