@@ -50,7 +50,7 @@ async function runInstagram(content) {
     console.log('COMPLET: SEND STORY');
 
 
-    await takeScreenshot(page, 5000);
+    // await takeScreenshot(page, 5000);
 
 
     await browser.close();

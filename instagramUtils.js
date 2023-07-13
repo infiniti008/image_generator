@@ -22,13 +22,13 @@ export const variablesByCountry = {
 };
 
 export async function removeCookies(content) {
-  try {
-    const { cookiesPath } = variablesByCountry[content.country];
+  // try {
+  //   const { cookiesPath } = variablesByCountry[content.country];
 
-    fs.unlinkSync(cookiesPath);
-  } catch(err) {
-    console.log(err?.message);
-  }
+  //   fs.unlinkSync(cookiesPath);
+  // } catch(err) {
+  //   console.log(err?.message);
+  // }
 }
 
 export async function takeScreenshot(page, delay = 3000) {
@@ -73,19 +73,19 @@ export async function launch() {
 }
 
 export async function logIn(page, content) {
-  const { cookiesPath } = variablesByCountry[content.country];
+  // const { cookiesPath } = variablesByCountry[content.country];
 
-  console.log('WAITING: SET COOKIES');
-  try {
-    let savedCookiesPL = fs.readFileSync(cookiesPath).toString();
-    savedCookiesPL = JSON.parse(savedCookiesPL);
-    await page.setCookie(...savedCookiesPL);
-    console.log('SUCCESS: SET COOKIES');
-  } catch(err) {
-    console.log(err.message);
-    console.log('ERROR: SET COOKIES');
-  }
-  console.log('COMPLET: SET COOKIES');
+  // console.log('WAITING: SET COOKIES');
+  // try {
+  //   let savedCookiesPL = fs.readFileSync(cookiesPath).toString();
+  //   savedCookiesPL = JSON.parse(savedCookiesPL);
+  //   await page.setCookie(...savedCookiesPL);
+  //   console.log('SUCCESS: SET COOKIES');
+  // } catch(err) {
+  //   console.log(err.message);
+  //   console.log('ERROR: SET COOKIES');
+  // }
+  // console.log('COMPLET: SET COOKIES');
 
 
   console.log('WAITING: OPEN PAGE');
@@ -98,23 +98,25 @@ export async function logIn(page, content) {
   let isLoggedInByCookies = false;
   let isLoggedInByLogin = false;
 
-  try {
-    await page.waitForSelector(selectorAddContent, { timeout: 6000 });
-    isLoggedInByCookies = true;
-  } catch(err) {
-    console.log(err.message);
-    await takeScreenshot(page, 1000);
-  }
-  console.log('COMPLET: CHECK LOGIN - ', isLoggedInByCookies);
+  // try {
+  //   await page.waitForSelector(selectorAddContent, { timeout: 6000 });
+  //   isLoggedInByCookies = true;
+  // } catch(err) {
+  //   console.log(err.message);
+  //   await takeScreenshot(page, 1000);
+  // }
+  // console.log('COMPLET: CHECK LOGIN - ', isLoggedInByCookies);
 
 
   if (!isLoggedInByCookies) {
     console.log('WAITING: CLICK ACEPT COOCKIE BUTTON');
+    const selectorCoockieDialog = 'div[role="dialog"]';
     try {
       await page.waitForXPath('//*[contains(text(), "Allow all cookies")]', { timeout: 6000 });
       const [buttonAcceptCookies] = await page.$x('//*[contains(text(), "Allow all cookies")]');
       if (buttonAcceptCookies) {
         await buttonAcceptCookies.click();
+        await page.waitForFunction((selectorCoockieDialog) => !document.querySelector(selectorCoockieDialog), {}, selectorCoockieDialog);
       }
     } catch (err) {
       console.log(err?.message);
@@ -169,12 +171,12 @@ export async function logIn(page, content) {
   }
 
 
-  if (isLoggedInByLogin) {
-    console.log('WAITING: SAVE COOKIES');
-    const cookies = await page.cookies();   
-    fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
-    console.log('COMPLET: SAVE COOKIES');
-  } else if (!isLoggedInByCookies) {
-    removeCookies(content);
-  }
+  // if (isLoggedInByLogin) {
+  //   console.log('WAITING: SAVE COOKIES');
+  //   const cookies = await page.cookies();   
+  //   fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
+  //   console.log('COMPLET: SAVE COOKIES');
+  // } else if (!isLoggedInByCookies) {
+  //   removeCookies(content);
+  // }
 }
