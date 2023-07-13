@@ -123,11 +123,12 @@ export async function logIn(page, content) {
 
     console.log('WAITING: CLICK ACEPT COOCKIE BUTTON');
     try {
-      await page.keyboard.down('Shift');
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Tab');
-      await page.keyboard.up('Shift');
-      await page.keyboard.press('Enter');
+      await page.waitForXPath('//button[contains(text(), "Allow all cookies")]', { timeout: 3000 });
+      const [buttonAcceptCookies] = await page.$x('//button[contains(text(), "Allow all cookies")]');
+      if (buttonAcceptCookies) {
+        await buttonAcceptCookies.click();
+        await page.waitForSelector(selectorUserNameInput);
+      }
       await page.waitForFunction((selectorCoockieDialog) => !document.querySelector(selectorCoockieDialog), {}, selectorCoockieDialog);
     } catch (err) {
       console.log(err?.message);
