@@ -168,7 +168,7 @@ export async function postToInstagramReels(content) {
   try {
     console.log('====================================');
     console.log('START: POSTING TO INSTAGRAM REELS');
-    console.log(`[ Country = ${content.country} ] [ Name = ${content.name} ] [ File Path = ${content.videoPath} ]`);
+    console.log(`[ ${content.time} ] [ ${content.country} ] [ ${content.name} ] [ ${content.videoPath} ]`);
     
     const status = await runInstagram(content);
 
