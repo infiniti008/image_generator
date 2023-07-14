@@ -6,8 +6,9 @@ dotenv.config({
 const env = process.env.environment || 'prod';
 const executablePath = process.env['executablePath_' + env];
 const mediaFolderPath = process.env['mediaFolderPath_' + env];
+const doNotDisplayCookieModalCookie_eig_did = process.env.doNotDisplayCookieModalCookie_eig_did;
 
-import fs from 'fs';
+// import fs from 'fs';
 import puppeteer from 'puppeteer';
 
 export const variablesByCountry = {
@@ -50,6 +51,7 @@ export async function launch() {
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
+      // slowMo: 50,
       args: ['--no-sandbox', '--lang=en-US']
     });
 
@@ -73,19 +75,33 @@ export async function launch() {
 }
 
 export async function logIn(page, content) {
-  // const { cookiesPath } = variablesByCountry[content.country];
+  // const { cookiesPath } = variablesByCountry[content.country].cookiesPath;
 
-  // console.log('WAITING: SET COOKIES');
-  // try {
-  //   let savedCookiesPL = fs.readFileSync(cookiesPath).toString();
-  //   savedCookiesPL = JSON.parse(savedCookiesPL);
-  //   await page.setCookie(...savedCookiesPL);
-  //   console.log('SUCCESS: SET COOKIES');
-  // } catch(err) {
-  //   console.log(err.message);
-  //   console.log('ERROR: SET COOKIES');
-  // }
-  // console.log('COMPLET: SET COOKIES');
+  console.log('WAITING: SET COOKIES');
+  try {
+    let savedCookies = [
+      {
+        "name": "ig_did",
+        "value": doNotDisplayCookieModalCookie_eig_did,
+        "domain": ".instagram.com",
+        "path": "/",
+        "expires": 1720861283.380388,
+        "size": 42,
+        "httpOnly": true,
+        "secure": true,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      }
+  ];
+    await page.setCookie(...savedCookies);
+    console.log('SUCCESS: SET COOKIES');
+  } catch(err) {
+    console.log(err.message);
+    console.log('ERROR: SET COOKIES');
+  }
+  console.log('COMPLET: SET COOKIES');
 
 
   console.log('WAITING: OPEN PAGE');
@@ -112,7 +128,7 @@ export async function logIn(page, content) {
     console.log('WAITING: CLICK ACEPT COOCKIE BUTTON');
     const selectorCoockieDialog = 'div[role="dialog"]';
     try {
-      await page.waitForXPath('//*[contains(text(), "Allow all cookies")]', { timeout: 6000 });
+      await page.waitForXPath('//*[contains(text(), "Allow all cookies")]', { timeout: 1000 });
       const [buttonAcceptCookies] = await page.$x('//*[contains(text(), "Allow all cookies")]');
       if (buttonAcceptCookies) {
         await buttonAcceptCookies.click();
