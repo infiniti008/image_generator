@@ -61,7 +61,7 @@ export async function launch() {
       'Accept-Language': 'en'
     });
 
-    const m = puppeteer.devices['iPhone 12 Pro'];
+    const m = puppeteer.devices['iPhone 13 Pro'];
     await page.emulate(m);
 
     console.log('COMPLET: LAUNCH BROWSER');
@@ -106,7 +106,10 @@ export async function logIn(page, content) {
 
   console.log('WAITING: OPEN PAGE');
   await page.goto('https://www.instagram.com/');
-  await page.setViewport({width: 390, height: 800});
+  await page.setViewport({
+    width: 756,
+    height: 1344
+  });
   console.log('COMPLET: OPEN PAGE');
 
   console.log('WAITING: CHECK LOGIN');
