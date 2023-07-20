@@ -63,7 +63,7 @@ async function runInstagram(content) {
 
 
     const selectorPostInput = 'input[accept*="video/mp4"]';
-    await page.waitForSelector(selectorPostInput, { timeout: 6000 });
+    await page.waitForSelector(selectorPostInput, { timeout: 20000 });
 
 
     console.log('WAITING: ADD FILE');
