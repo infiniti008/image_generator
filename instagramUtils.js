@@ -35,7 +35,7 @@ export async function removeCookies(content) {
 export async function takeScreenshot(page, delay = 3000) {
   console.log('WAITING: TAKE A SCREENSHOT');
   const screenshotPath = env === 'prod' 
-    ? mediaFolderPath + '/images/' + new Date().toLocaleString('ru-RU').replace(', ', '-') + '-screenshot.png' 
+    ? mediaFolderPath + '/images/' + new Date().toLocaleDateString('ru-RU') + '-screenshot-' + new Date().toLocaleTimeString('ru-RU').replace(', ','-') + '.png' 
     : 'img.png';
   await page.waitForTimeout(delay);
   await page.screenshot({
