@@ -141,6 +141,7 @@ async function runInstagram(content) {
     if (buttonShare) {
       await buttonShare.click();
     }
+    await page.waitForTimeout(5000);
     console.log('COMPLET: CLICK SHARE BUTTON');
 
 
