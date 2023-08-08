@@ -116,7 +116,7 @@ export async function postToTikTok(content) {
   }
 }
 
-const content = JSON.parse(fs.readFileSync('./content.json').toString());
+// const content = JSON.parse(fs.readFileSync('./content.json').toString());
 
-postToTikTok(content);
+// postToTikTok(content);
 
