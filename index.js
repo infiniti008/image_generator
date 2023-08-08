@@ -11,6 +11,7 @@ import fs from 'fs';
 import nodeHtmlToImage from 'node-html-to-image';
 import { postToInstagramStories } from'./postToInstagramStories.js';
 import { postToInstagramReels } from './postToInstagramPost.js';
+import { postToTikTok } from './postToTikTok.js';
 
 const app = express();
 
@@ -85,6 +86,19 @@ app.post('/api/send-reels', async function(req, res) {
     const { content } = req.body.data;
     
     const status = await postToInstagramReels(content);
+
+    res.json({ status });
+  } catch (err) {
+    console.log(err);
+    res.json({ status: false });
+  }
+});
+
+app.post('/api/send-tiktok', async function(req, res) {
+  try {
+    const { content } = req.body.data;
+    
+    const status = await postToTikTok(content);
 
     res.json({ status });
   } catch (err) {
