@@ -132,6 +132,12 @@ async function runInstagram(content) {
 
     const selectorCityInput = 'input[name="creation-location-input"]';
     await page.type(selectorCityInput, variablesByCountry[content.country].cityName);
+
+    await page.waitForXPath(`//*[contains(text(), "${variablesByCountry[content.country].cityName}")]`, { timeout: 6000 });
+    const [citySelector] = await page.$x(`//*[contains(text(), "${variablesByCountry[content.country].cityName}")]`);
+    if (citySelector) {
+      await citySelector.click();
+    }
     console.log('COMPLET: FILL TITLE AND DESCRIPTION');
 
 
@@ -141,7 +147,7 @@ async function runInstagram(content) {
     if (buttonShare) {
       await buttonShare.click();
     }
-    await page.waitForTimeout(5000);
+    await page.waitForXPath(`//*[contains(text(), "Your reel has been shared")]`, { timeout: 60000 });
     console.log('COMPLET: CLICK SHARE BUTTON');
 
 
@@ -183,3 +189,9 @@ export async function postToInstagramReels(content) {
     return { status: false };
   }
 }
+
+
+// import fs from 'fs'
+// const content = JSON.parse(fs.readFileSync('./content.json').toString());
+
+// postToInstagramReels(content);

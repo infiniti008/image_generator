@@ -14,11 +14,11 @@ import puppeteer from 'puppeteer';
 export const variablesByCountry = {
   pl: {
     cookiesPath: './cookiesPL.json',
-    cityName: 'Warszawa'
+    cityName: 'Warsaw, Poland'
   },
   by: {
     cookiesPath: './cookiesBY.json',
-    cityName: 'Minsk'
+    cityName: 'Minsk, Belarus'
   }
 };
 
@@ -51,7 +51,7 @@ export async function launch() {
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
-      // slowMo: 50,
+      // slowMo: 10,
       args: ['--no-sandbox', '--lang=en-US']
     });
 
