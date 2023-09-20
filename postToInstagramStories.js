@@ -82,11 +82,11 @@ export async function postToInstagramStories(content) {
     console.log('END: POSTING TO INSTAGRAM STORIES');
     console.log('====================================');
 
-    return { status };
+    return status;
   } catch (err) {
     console.log('ERROR: POSTING TO INSTAGRAM STORIES');
     console.log(err);
 
-    return { status: false };
+    return false;
   }
 }

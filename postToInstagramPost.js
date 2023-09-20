@@ -182,11 +182,11 @@ export async function postToInstagramReels(content) {
     console.log('END: POSTING TO INSTAGRAM REELS');
     console.log('====================================');
 
-    return { status };
+    return status;
   } catch (err) {
     console.log('ERROR: POSTING TO INSTAGRAM REELS');
     console.log(err);
-    return { status: false };
+    return false;
   }
 }
 

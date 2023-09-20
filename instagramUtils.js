@@ -22,16 +22,6 @@ export const variablesByCountry = {
   }
 };
 
-export async function removeCookies(content) {
-  // try {
-  //   const { cookiesPath } = variablesByCountry[content.country];
-
-  //   fs.unlinkSync(cookiesPath);
-  // } catch(err) {
-  //   console.log(err?.message);
-  // }
-}
-
 export async function takeScreenshot(page, delay = 3000) {
   console.log('WAITING: TAKE A SCREENSHOT');
   const screenshotPath = env === 'prod' 
@@ -75,7 +65,6 @@ export async function launch() {
 }
 
 export async function logIn(page, content) {
-  // const { cookiesPath } = variablesByCountry[content.country].cookiesPath;
 
   console.log('WAITING: SET COOKIES');
   try {
@@ -116,16 +105,6 @@ export async function logIn(page, content) {
   const selectorAddContent = 'a[href="#"]';
   let isLoggedInByCookies = false;
   let isLoggedInByLogin = false;
-
-  // try {
-  //   await page.waitForSelector(selectorAddContent, { timeout: 6000 });
-  //   isLoggedInByCookies = true;
-  // } catch(err) {
-  //   console.log(err.message);
-  //   await takeScreenshot(page, 1000);
-  // }
-  // console.log('COMPLET: CHECK LOGIN - ', isLoggedInByCookies);
-
 
   if (!isLoggedInByCookies) {
     console.log('WAITING: CLICK ACEPT COOCKIE BUTTON');
@@ -188,14 +167,4 @@ export async function logIn(page, content) {
     }
     console.log('COMPLET: CHECK LOGIN AFTER LOGIN - ', isLoggedInByLogin);
   }
-
-
-  // if (isLoggedInByLogin) {
-  //   console.log('WAITING: SAVE COOKIES');
-  //   const cookies = await page.cookies();   
-  //   fs.writeFileSync(cookiesPath, JSON.stringify(cookies, null, 2));
-  //   console.log('COMPLET: SAVE COOKIES');
-  // } else if (!isLoggedInByCookies) {
-  //   removeCookies(content);
-  // }
 }

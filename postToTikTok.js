@@ -108,11 +108,11 @@ export async function postToTikTok(content) {
     console.log('END: POSTING TO TIK TOK');
     console.log('====================================');
 
-    return { status };
+    return status;
   } catch (err) {
     console.log('ERROR: POSTING TO TIK TOK');
     console.log(err);
-    return { status: false };
+    return false;
   }
 }
 
