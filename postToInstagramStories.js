@@ -5,12 +5,16 @@ dotenv.config({
 const env = process.env.environment || 'prod';
 const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
-import { launch, logIn, removeCookies, takeScreenshot } from './instagramUtils.js';
+import { launch, logIn, takeScreenshot } from './instagramUtils.js';
 
 let browser  = null;
 let page = null;
 
 async function runInstagram(content) {
+  const status = {
+    errors: [],
+    logs: [],
+  };
   try {
     const { _page, _browser } = await launch();
 
@@ -19,7 +23,8 @@ async function runInstagram(content) {
 
     if (!page && !browser) {
       console.log('ERROR LAUNCH BROWSER');
-      return;
+      status.errors.push('ERROR LAUNCH BROWSER');
+      return status;
     }
 
 
@@ -39,6 +44,7 @@ async function runInstagram(content) {
       parentElement.click(),
     ]);
     await fileChooser.accept([mediaFolderPath + content.imagePath]);
+    status.logs.push('COMPLET: PRESS ADD STORY');
     console.log('COMPLET: PRESS ADD STORY');
 
 
@@ -47,6 +53,7 @@ async function runInstagram(content) {
     await page.waitForSelector(selectorButtonSubmitStroy, { timeout: 6000 });
     await page.click(selectorButtonSubmitStroy);
     await page.waitForSelector(selectorAddContent, { timeout: 20000 });
+    status.logs.push('COMPLET: SEND STORY');
     console.log('COMPLET: SEND STORY');
 
 
@@ -56,18 +63,22 @@ async function runInstagram(content) {
     await browser.close();
     browser = null;
     page = null;
+    status.logs.push('COMPLET: CLOSE BROWSER');
 
-    return true;
+    status.completed = true;
+    return status;
   } catch(err) {
     console.log(err);
+    status.errors.push(err?.message);
 
     await takeScreenshot(page, 1000);
-
     await browser.close();
+    status.logs.push('COMPLET: TAKE FINAL SCREENSHOT');
+
     browser = null;
     page = null;
-    removeCookies(content);
-    return false;
+    status.completed = false;
+    return status;
   }
 }
 
@@ -87,6 +98,9 @@ export async function postToInstagramStories(content) {
     console.log('ERROR: POSTING TO INSTAGRAM STORIES');
     console.log(err);
 
-    return false;
+    return { 
+      completed: false,
+      errors: [err?.message]
+    };
   }
 }

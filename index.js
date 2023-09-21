@@ -74,10 +74,13 @@ app.post('/api/send-stories', async function(req, res) {
     
     const status = await postToInstagramStories(content);
 
-    res.json({ status });
+    res.json(status);
   } catch (err) {
     console.log(err);
-    res.json({ status: false });
+    res.json({
+      completed: false,
+      errors: [err?.message]
+    });
   }
 });
 
@@ -87,10 +90,13 @@ app.post('/api/send-reels', async function(req, res) {
     
     const status = await postToInstagramReels(content);
 
-    res.json({ status });
+    res.json(status);
   } catch (err) {
     console.log(err);
-    res.json({ status: false });
+    res.json({
+      completed: false,
+      errors: [err?.message]
+    });
   }
 });
 
@@ -100,9 +106,12 @@ app.post('/api/send-tiktok', async function(req, res) {
     
     const status = await postToTikTok(content);
 
-    res.json({ status });
+    res.json(status);
   } catch (err) {
     console.log(err);
-    res.json({ status: false });
+    res.json({
+      completed: false,
+      errors: [err?.message]
+    });
   }
 });

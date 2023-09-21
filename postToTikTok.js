@@ -13,6 +13,10 @@ let page = null;
 
 
 async function runTikTok(content) {
+  const status = {
+    errors: [],
+    logs: [],
+  };  
   try {
     const { _page, _browser } = await launch();
 
@@ -21,14 +25,17 @@ async function runTikTok(content) {
 
     if (!page && !browser) {
       console.log('ERROR LAUNCH BROWSER');
-      return;
+      status.errors.push('ERROR LAUNCH BROWSER');
+      return status;
     }
     let isPageLoaded = false;
     while(!isPageLoaded) {
       isPageLoaded = await openUploadPage(page, content);
+      status.logs.push('COMPLET: OPEN UPLOAD PAGE');
     }
 
     await upload(page, content);
+    status.logs.push('COMPLET: UPLOAD VIDEO');
 
 
     waiting('CLICK POST BUTTON');
@@ -69,22 +76,27 @@ async function runTikTok(content) {
       await page.keyboard.press('Delete')
       await frame.waitForTimeout(50);
     }
+    status.logs.push('COMPLET: CLEAR DESCRIPTION INPUT');
 
     await frame.type(selectorDescriptionInput, content.videoTitle + '\r\n' + content.videoDescription);
+    status.logs.push('COMPLET: FILL DESCRIPTION INPUT');
 
     await page.waitForTimeout(1000);
 
     await frame.click(selectorButtonPost);
 
     await frame.waitForXPath('//*[contains(text(), "Your videos are being uploaded to TikTok!")]', { timeout: 20000 });
+    status.logs.push('COMPLET: CLICK POST BUTTON');
     complete('CLICK POST BUTTON');
 
     await takeScreenshot(page, 5000);
     await browser.close();
+    status.logs.push('COMPLET: TAKE FINAL SCREENSHOT');
 
     browser = null;
     page = null;
-    return true;
+    status.completed = true;
+    return status;
   } catch(err) {
     console.log(err);
 
@@ -93,7 +105,10 @@ async function runTikTok(content) {
 
     browser = null;
     page = null;
-    return false;
+    return {
+      completed: false,
+      errors: [err?.message]
+    };
   }
 }
 
@@ -112,7 +127,10 @@ export async function postToTikTok(content) {
   } catch (err) {
     console.log('ERROR: POSTING TO TIK TOK');
     console.log(err);
-    return false;
+    return {
+      completed: false,
+      errors: [err?.message]
+    };
   }
 }
 
