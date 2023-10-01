@@ -24,6 +24,7 @@ async function runInstagram(content) {
     if (!page && !browser) {
       console.log('ERROR LAUNCH BROWSER');
       status.errors.push('ERROR LAUNCH BROWSER');
+      status.completed = false;
       return status;
     }
 
