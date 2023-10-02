@@ -6,7 +6,7 @@ dotenv.config({
 const env = process.env.environment || 'prod';
 
 import fs from 'fs';
-import { takeScreenshot, waiting, complete, launch, openUploadPage, upload } from './tikTokUtils.js';
+import { takeScreenshot, waiting, complete, launch, openUploadPage, upload, variablesByCountry } from './tikTokUtils.js';
 
 let browser = null;
 let page = null;
@@ -44,7 +44,7 @@ async function runTikTok(content) {
     await page.waitForSelector('iframe');
 
     const elementHandle = await page.$(
-      'iframe[src="https://www.tiktok.com/creator#/upload?lang=en"]',
+      variablesByCountry[content.country].iframeSelector,
     );
     const frame = await elementHandle.contentFrame();
     await frame.waitForXPath('//*[contains(text(), "Edit video")]', { timeout: 20000 });

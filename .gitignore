@@ -135,3 +135,5 @@ dist
 cookies*
 
 .DS_Store
+
+content.json

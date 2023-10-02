@@ -9,6 +9,24 @@ const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
 import puppeteer from 'puppeteer';
 
+
+export const variablesByCountry = {
+  pl: {
+    cookiesPath: './cookiesPL.json',
+    cityName: 'Warsaw, Poland',
+    url: 'https://www.tiktok.com/upload?lang=en',
+    iframeSelector: 'iframe[src="https://www.tiktok.com/creator#/upload?lang=en"]',
+    mainPageSelector: '#webapp-header-mask',
+  },
+  by: {
+    cookiesPath: './cookiesBY.json',
+    cityName: 'Minsk, Belarus',
+    url: 'https://www.tiktok.com/creator-center/upload?lang=en',
+    iframeSelector: 'iframe[src="https://www.tiktok.com/creator#/upload?scene=creator_center"]',
+    mainPageSelector: 'div[data-tt="Upload_index_UploadContainer"]',
+  }
+};
+
 export function waiting(msg) {
   console.log('WAITING: ' + msg);
 }
@@ -36,7 +54,7 @@ export async function launch() {
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
-      // slowMo: 50,
+      slowMo: 10,
       args: ['--no-sandbox', '--lang="en-US"']
     });
 
@@ -76,7 +94,8 @@ export async function openUploadPage(page, content) {
       height: 800
     });
 
-    await page.goto('https://www.tiktok.com/upload?lang=en', { timeout: 15000 });
+    const url = variablesByCountry[content.country].url;
+    await page.goto(url, { timeout: 15000 });
     return true;
   } catch(err) {
     console.log(err.message);
@@ -88,14 +107,14 @@ export async function openUploadPage(page, content) {
 
 export async function upload(page, content) {
   waiting('CLICK SELECT FILE BUTTON');
-  const selectorHeader = '#webapp-header-mask';
+  const selectorHeader = variablesByCountry[content.country].mainPageSelector;
   await page.waitForSelector(selectorHeader);
   await page.waitForTimeout(3000);
 
   await page.waitForSelector('iframe');
 
   const elementHandle = await page.$(
-    'iframe[src="https://www.tiktok.com/creator#/upload?lang=en"]',
+    variablesByCountry[content.country].iframeSelector,
   );
   const frame = await elementHandle.contentFrame();
   await page.waitForTimeout(1000);
