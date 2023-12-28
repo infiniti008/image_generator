@@ -31,6 +31,14 @@ async function runInstagram(content) {
 
     await logIn(page, content);
 
+    console.log('WAITING: SAVE LOGIN INFO');
+    await page.goto('https://www.instagram.com/');
+    const selectorPresentation = 'div[role="presentation"]';
+    await page.waitForSelector(selectorPresentation, { timeout: 6000 });
+    await page.waitForTimeout(1000);
+    await page.$$eval(selectorPresentation, els => els.forEach(el => el.remove()));
+    console.log('COMPLET: SAVE LOGIN INFO');
+
 
     console.log('WAITING: PRESS ADD STORY');
     const selectorAddContent = 'a[href="#"]';
@@ -105,3 +113,8 @@ export async function postToInstagramStories(content) {
     };
   }
 }
+
+// import fs from 'fs'
+// const content = JSON.parse(fs.readFileSync('./content.json').toString());
+
+// postToInstagramStories(content);

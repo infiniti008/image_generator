@@ -66,6 +66,14 @@ async function runInstagram(content) {
     const addPostSVGElement = await page.$(selectorAddPost);
     const addPostElement = await addPostSVGElement.getProperty('parentElement');
     await addPostElement.click();
+
+    await page.waitForTimeout(1000);
+
+    const selectorAddNewPost = 'svg[aria-label="Post"]';
+    const addNewPostSVGElement = await page.$(selectorAddNewPost);
+    const addNewPostElement = await addNewPostSVGElement.getProperty('parentElement');
+    await addNewPostElement.click();
+
     status.logs.push('COMPLET: CLICK ADD POST');
     console.log('COMPLET: CLICK ADD POST');
 
