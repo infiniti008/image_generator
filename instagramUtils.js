@@ -4,12 +4,8 @@ dotenv.config({
 });
 
 const env = process.env.environment || 'prod';
-const executablePath = process.env['executablePath_' + env];
 const mediaFolderPath = process.env['mediaFolderPath_' + env];
 const doNotDisplayCookieModalCookie_eig_did = process.env.doNotDisplayCookieModalCookie_eig_did;
-
-// import fs from 'fs';
-import puppeteer from 'puppeteer';
 
 export const variablesByCountry = {
   pl: {
@@ -35,34 +31,6 @@ export async function takeScreenshot(page, delay = 3000) {
   console.log('COMPLET: TAKE A SCREENSHOT');
 }
 
-export async function launch() {
-  console.log('WAITING: LAUNCH BROWSER');
-  try {
-    const browser = await puppeteer.launch({
-      executablePath,
-      headless: true,
-      // slowMo: 10,
-      args: ['--no-sandbox', '--lang=en-US']
-    });
-
-    const page = await browser.newPage();
-
-    await page.setExtraHTTPHeaders({
-      'Accept-Language': 'en'
-    });
-
-    const m = puppeteer.devices['iPhone 13 Pro'];
-    await page.emulate(m);
-
-    console.log('COMPLET: LAUNCH BROWSER');
-    return { _page: page, _browser: browser };
-  } catch(err) {
-    console.log(err?.message);
-    console.log('ERROR: LAUNCH BROWSER');
-    return {};
-  }
-  
-}
 
 export async function logIn(page, content) {
 
@@ -100,6 +68,17 @@ export async function logIn(page, content) {
     height: 1344
   });
   console.log('COMPLET: OPEN PAGE');
+
+  console.log('WAITING: CHECK LOGIN BEFORE LOGIN');
+  try {
+    const selectorMenu = 'div[role="menu"]';
+    await page.waitForSelector(selectorMenu, { timeout: 2000 });
+    return;
+  } catch(err) {
+    console.log(err);
+    await takeScreenshot(page, 1000);
+  }
+  console.log('COMPLET: CHECK LOGIN BEFORE LOGIN');
 
   console.log('WAITING: CHECK LOGIN');
   const selectorAddContent = 'a[href="#"]';
@@ -146,20 +125,20 @@ export async function logIn(page, content) {
     
     console.log('WAITING: CLICK SAVE INFO TO LOGIN');
     try {
-      await page.waitForXPath('//*[contains(text(), "Save Info")]', { timeout: 6000 });
-      await page.keyboard.press('Tab');
-      await page.keyboard.press('Enter');
+      await page.waitForXPath('//*[contains(text(), "Save your login info?")]', { timeout: 6000 });
+
+      await page.goto('https://www.instagram.com/');
     } catch (err) {
+      console.log(err?.message);
       console.log('ERROR: CLICK SAVE INFO TO LOGIN');
-      console.log(err.message);
-      await takeScreenshot(page, 1000);
     }
     console.log('COMPLET: CLICK SAVE INFO TO LOGIN');
 
 
     console.log('WAITING: CHECK LOGIN AFTER LOGIN');
     try {
-      await page.waitForSelector(selectorAddContent, { timeout: 6000 });
+      const selectorMenu = 'div[role="menu"]';
+      await page.waitForSelector(selectorMenu, { timeout: 6000 });
       isLoggedInByLogin = true;
     } catch(err) {
       console.log(err);

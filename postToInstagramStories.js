@@ -2,41 +2,30 @@ import * as dotenv from 'dotenv';
 dotenv.config({
   path: './.env'
 });
+
+import puppeteer from 'puppeteer';
 const env = process.env.environment || 'prod';
-const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
-import { launch, logIn, takeScreenshot } from './instagramUtils.js';
+import { logIn, takeScreenshot } from './instagramUtils.js';
 
-let browser  = null;
-let page = null;
-
-async function runInstagram(content) {
+async function runInstagram(page, subscription) {
   const status = {
     errors: [],
     logs: [],
   };
   try {
-    const { _page, _browser } = await launch();
+    const m = puppeteer.devices['iPhone 13 Pro'];
+    await page.emulate(m);
+    status.logs.push('COMPLET: OPEN PAGE');
 
-    browser = _browser;
-    page = _page;
-
-    if (!page && !browser) {
-      console.log('ERROR LAUNCH BROWSER');
-      status.errors.push('ERROR LAUNCH BROWSER');
-      status.completed = false;
-      return status;
-    }
-
-
-    await logIn(page, content);
+    await logIn(page, subscription);
 
     console.log('WAITING: SAVE LOGIN INFO');
-    await page.goto('https://www.instagram.com/');
     const selectorPresentation = 'div[role="presentation"]';
     await page.waitForSelector(selectorPresentation, { timeout: 6000 });
     await page.waitForTimeout(1000);
     await page.$$eval(selectorPresentation, els => els.forEach(el => el.remove()));
+    status.logs.push('COMPLET: LOG IN');
     console.log('COMPLET: SAVE LOGIN INFO');
 
 
@@ -52,7 +41,7 @@ async function runInstagram(content) {
       page.waitForFileChooser(),
       parentElement.click(),
     ]);
-    await fileChooser.accept([mediaFolderPath + content.imagePath]);
+    await fileChooser.accept([subscription.imagePath]);
     status.logs.push('COMPLET: PRESS ADD STORY');
     console.log('COMPLET: PRESS ADD STORY');
 
@@ -65,15 +54,6 @@ async function runInstagram(content) {
     status.logs.push('COMPLET: SEND STORY');
     console.log('COMPLET: SEND STORY');
 
-
-    // await takeScreenshot(page, 5000);
-
-
-    await browser.close();
-    browser = null;
-    page = null;
-    status.logs.push('COMPLET: CLOSE BROWSER');
-
     status.completed = true;
     return status;
   } catch(err) {
@@ -81,23 +61,23 @@ async function runInstagram(content) {
     status.errors.push(err?.message);
 
     await takeScreenshot(page, 1000);
-    await browser.close();
-    status.logs.push('COMPLET: TAKE FINAL SCREENSHOT');
 
-    browser = null;
-    page = null;
     status.completed = false;
     return status;
   }
 }
 
-export async function postToInstagramStories(content) {
+export async function postToInstagramStories(browser, subscription) {
   try {
     console.log('====================================');
     console.log('START: POSTING TO INSTAGRAM STORIES');
-    console.log(`[ Country = ${content.country} ] [ Name = ${content.name} ] [ File Name = ${content.fileName} ]`);
+    console.log(`[ Country = ${subscription.country} ] [ Name = ${subscription.name} ] [ File Name = ${subscription.fileName} ]`);
 
-    const status = await runInstagram(content);
+    const { page, currentPageId } = await browser.createPage();
+
+    const status = await runInstagram(page, subscription);
+
+    await browser.closePage(currentPageId);
 
     console.log('END: POSTING TO INSTAGRAM STORIES');
     console.log('====================================');
@@ -113,8 +93,3 @@ export async function postToInstagramStories(content) {
     };
   }
 }
-
-// import fs from 'fs'
-// const content = JSON.parse(fs.readFileSync('./content.json').toString());
-
-// postToInstagramStories(content);
