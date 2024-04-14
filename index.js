@@ -15,8 +15,6 @@ import { render } from './renderImage.js';
 import { renderVideo } from './renderVideo.js';
 import Browser from './browser.js';
 
-import content from './content.js';
-
 const browser = new Browser();
 const app = express();
 
