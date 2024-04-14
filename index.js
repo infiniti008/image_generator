@@ -130,7 +130,3 @@ function getTimezone(subscription) {
     return 'Europe/Warsaw';
   }
 }
-
-(async () => {
-  await postToTikTok(browser, subscription);
-})()
