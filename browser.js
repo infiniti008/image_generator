@@ -24,7 +24,7 @@ export default class Browser {
   }
 
   async launch() {
-    console.log('[BROWSER] - WAITING: LAUNCH BROWSER');
+    console.log('[= BROWSER =] - WAITING: LAUNCH BROWSER');
     try {
       this.browser = await puppeteer.launch({
         executablePath,
@@ -33,7 +33,7 @@ export default class Browser {
         args: ['--no-sandbox', '--lang=en-US'],
         ignoreHTTPSErrors: true
       });
-      console.log('[BROWSER] - COMPLET: LAUNCH BROWSER');
+      console.log('[= BROWSER =] - COMPLET: LAUNCH BROWSER');
 
       await this.openContextByCountry('by');
       await this.openContextByCountry('pl');
@@ -41,13 +41,13 @@ export default class Browser {
       return this.browser;
     } catch(err) {
       console.log(err?.message);
-      console.log('[BROWSER] - ERROR: LAUNCH BROWSER');
+      console.log('[= BROWSER =] - ERROR: LAUNCH BROWSER');
       return null;
     }
   }
 
   async openContextByCountry(countryCode) {
-    console.log('[BROWSER] - START: OPEN CONTEXT BY COUNTRY - ', countryCode);
+    console.log('[= BROWSER =] - START: OPEN CONTEXT BY COUNTRY - ', countryCode);
     try {
       const contextName = `context_${countryCode}`;
       const context = await this.browser.createIncognitoBrowserContext();
@@ -55,9 +55,9 @@ export default class Browser {
 
       await this.openInstagramPage(countryCode, context);
 
-      console.log('[BROWSER] - COMPLETED: OPEN CONTEXT BY COUNTRY - ', countryCode);
+      console.log('[= BROWSER =] - COMPLETED: OPEN CONTEXT BY COUNTRY - ', countryCode);
     } catch(err) {
-      console.log('[BROWSER] - ERROR: OPEN CONTEXT BY COUNTRY - ', countryCode);
+      console.log('[= BROWSER =] - ERROR: OPEN CONTEXT BY COUNTRY - ', countryCode);
       console.log(err?.message);
     }
   }
