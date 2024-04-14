@@ -6,29 +6,14 @@ dotenv.config({
 const env = process.env.environment || 'prod';
 const mediaFolderPath = process.env['mediaFolderPath_' + env];
 
-import { logIn, takeScreenshot, variablesByCountry, launch } from './instagramUtils.js';
+import { logIn, takeScreenshot, variablesByCountry } from './instagramUtils.js';
 
-let browser = null;
-let page = null;
-
-async function runInstagram(content) {
+async function runInstagram(page, content) {
   const status = {
     errors: [],
     logs: [],
   };
   try {
-    const { _page, _browser } = await launch();
-
-    browser = _browser;
-    page = _page;
-
-    if (!page && !browser) {
-      console.log('ERROR LAUNCH BROWSER');
-      status.errors.push('ERROR LAUNCH BROWSER');
-      return status;
-    }
-
-
     await logIn(page, content);
     status.loggedIn = true;
 
@@ -91,7 +76,7 @@ async function runInstagram(content) {
         page.waitForFileChooser(),
         buttonSelectFromComputer.click()
       ]);
-      await fileChooser.accept([mediaFolderPath + content.videoPath]);
+      await fileChooser.accept([content.videoPath]);
     }
     status.isFileSelected = true;
     status.logs.push('COMPLET: ADD FILE');
@@ -103,8 +88,7 @@ async function runInstagram(content) {
       await page.waitForXPath('//*[contains(text(), "Video posts are now shared as reels")]', { timeout: 6000 });
       await page.keyboard.press('Tab');
       await page.keyboard.press('Enter');
-      console.log('SUCCESS: CONFIRM POSTS AS REELS');
-      status.logs.push('SUCCESS: CONFIRM POSTS AS REELS');
+      status.logs.push('COMPLET: CONFIRM POSTS AS REELS');
     } catch(err) {
       console.log(err?.message);
       console.log('ERROR: CONFIRM POSTS AS REELS');
@@ -192,10 +176,6 @@ async function runInstagram(content) {
     status.isFinalScreenShotTook = true;
     status.logs.push('COMPLET: TAKE FINAL SCREENSHOT');
 
-    await browser.close();
-    browser = null;
-    page = null;
-
     status.completed = true;
     return status;
   } catch(err) {
@@ -203,21 +183,23 @@ async function runInstagram(content) {
 
     await takeScreenshot(page, 1000);
 
-    await browser.close();
-    browser = null;
-    page = null;
     status.errors.push(err?.message);
     return { completed: false };
   }
 }
 
-export async function postToInstagramReels(content) {
+export async function postToInstagramReels(browser, content) {
   try {
     console.log('====================================');
     console.log('START: POSTING TO INSTAGRAM REELS');
     console.log(`[ ${content.time} ] [ ${content.country} ] [ ${content.name} ] [ ${content.videoPath} ]`);
     
-    const status = await runInstagram(content);
+    const pageName = `pageInstagram_${content.country}`;
+    const page = await browser[pageName];
+
+    const status = await runInstagram(page, content);
+
+    await browser.pageGoToHomePageInstagram(content.country);
 
     console.log('END: POSTING TO INSTAGRAM REELS');
     console.log('====================================');

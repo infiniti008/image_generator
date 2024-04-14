@@ -9,12 +9,42 @@ const doNotDisplayCookieModalCookie_eig_did = process.env.doNotDisplayCookieModa
 
 export const variablesByCountry = {
   pl: {
-    cookiesPath: './cookiesPL.json',
-    cityName: 'Warsaw, Poland'
+    cityName: 'Warsaw, Poland',
+    cookies: [
+      {
+        "name": "ig_did",
+        "value": doNotDisplayCookieModalCookie_eig_did,
+        "domain": ".instagram.com",
+        "path": "/",
+        "expires": 1720861283.380388,
+        "size": 42,
+        "httpOnly": true,
+        "secure": true,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      }
+    ]
   },
   by: {
-    cookiesPath: './cookiesBY.json',
-    cityName: 'Minsk, Belarus'
+    cityName: 'Minsk, Belarus',
+    cookies: [
+      {
+        "name": "ig_did",
+        "value": doNotDisplayCookieModalCookie_eig_did,
+        "domain": ".instagram.com",
+        "path": "/",
+        "expires": 1720861283.380388,
+        "size": 42,
+        "httpOnly": true,
+        "secure": true,
+        "session": false,
+        "sameParty": false,
+        "sourceScheme": "Secure",
+        "sourcePort": 443
+      }
+    ]
   }
 };
 
@@ -33,33 +63,6 @@ export async function takeScreenshot(page, delay = 3000) {
 
 
 export async function logIn(page, content) {
-
-  console.log('WAITING: SET COOKIES');
-  try {
-    let savedCookies = [
-      {
-        "name": "ig_did",
-        "value": doNotDisplayCookieModalCookie_eig_did,
-        "domain": ".instagram.com",
-        "path": "/",
-        "expires": 1720861283.380388,
-        "size": 42,
-        "httpOnly": true,
-        "secure": true,
-        "session": false,
-        "sameParty": false,
-        "sourceScheme": "Secure",
-        "sourcePort": 443
-      }
-  ];
-    await page.setCookie(...savedCookies);
-    console.log('SUCCESS: SET COOKIES');
-  } catch(err) {
-    console.log(err.message);
-    console.log('ERROR: SET COOKIES');
-  }
-  console.log('COMPLET: SET COOKIES');
-
 
   console.log('WAITING: OPEN PAGE');
   await page.goto('https://www.instagram.com/');
@@ -138,7 +141,7 @@ export async function logIn(page, content) {
     console.log('WAITING: CHECK LOGIN AFTER LOGIN');
     try {
       const selectorMenu = 'div[role="menu"]';
-      await page.waitForSelector(selectorMenu, { timeout: 6000 });
+      await page.waitForSelector(selectorMenu, { timeout: 10000 });
       isLoggedInByLogin = true;
     } catch(err) {
       console.log(err);

@@ -73,11 +73,12 @@ export async function postToInstagramStories(browser, subscription) {
     console.log('START: POSTING TO INSTAGRAM STORIES');
     console.log(`[ Country = ${subscription.country} ] [ Name = ${subscription.name} ] [ File Name = ${subscription.fileName} ]`);
 
-    const { page, currentPageId } = await browser.createPage();
+    const pageName = `pageInstagram_${subscription.country}`;
+    const page = await browser[pageName];
 
     const status = await runInstagram(page, subscription);
 
-    await browser.closePage(currentPageId);
+    await browser.pageGoToHomePageInstagram(content.country);
 
     console.log('END: POSTING TO INSTAGRAM STORIES');
     console.log('====================================');

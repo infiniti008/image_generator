@@ -7,7 +7,6 @@ const env = process.env.environment || 'prod';
 const renderImageHost = process.env['renderImageHost_' + env] || 'https://currency.nikitenok-sl.keenetic.link/render?';
 
 async function run(page, config) {
-  console.log('WAITING: LAUNCH BROWSER');
   try {    
     console.log('WAITING: OPEN PAGE');
     await page.goto(config.url);

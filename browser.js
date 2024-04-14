@@ -5,8 +5,8 @@ dotenv.config({
 
 const env = process.env.environment || 'prod';
 const executablePath = process.env['executablePath_' + env];
-const headless = env === 'prod' ? true : false;
 const slowMo =  env === 'prod' ? 0 : 10;
+import { variablesByCountry } from './instagramUtils.js';
 
 import puppeteer from 'puppeteer';
 
@@ -15,6 +15,10 @@ export default class Browser {
     this.browser = null;
     this.pages = {};
     this.pageId = 0;
+    this.context_by = null;
+    this.context_pl = null;
+    this.pageInstagram_by = null;
+    this.pageInstagram_pl = null;
 
     this.launch();
   }
@@ -24,12 +28,16 @@ export default class Browser {
     try {
       this.browser = await puppeteer.launch({
         executablePath,
-        headless,
+        headless: false,
         slowMo,
         args: ['--no-sandbox', '--lang=en-US'],
         ignoreHTTPSErrors: true
       });
       console.log('[BROWSER] - COMPLET: LAUNCH BROWSER');
+
+      await this.openContextByCountry('by');
+      await this.openContextByCountry('pl');
+
       return this.browser;
     } catch(err) {
       console.log(err?.message);
@@ -37,6 +45,74 @@ export default class Browser {
       return null;
     }
   }
+
+  async openContextByCountry(countryCode) {
+    try {
+      const contextName = `context_${countryCode}`;
+      const context = await this.browser.createIncognitoBrowserContext();
+      this[contextName] = context;
+
+      await this.openInstagramPage(countryCode, context);
+
+      
+    } catch(err) {
+      console.log(err?.message);
+    }
+  }
+
+  async openInstagramPage(countryCode, context) {
+    try {
+      const instagramPageName = `pageInstagram_${countryCode}`;
+      const instagramPage = await context.newPage();
+      this[instagramPageName] = instagramPage;
+      await instagramPage.setExtraHTTPHeaders({
+        'Accept-Language': 'en'
+      });
+
+      const savedCookies = variablesByCountry[countryCode].cookies;
+      await instagramPage.setCookie(...savedCookies);
+      await this.pageGoToHomePageInstagram(countryCode);
+    } catch(err) {
+      console.log(err?.message);
+    }
+  }
+
+  async openTiktokPage(countryCode, context) {
+    try {
+      const tiktokPageName = `pageTiktok_${countryCode}`;
+      const tiktokPage = await context.newPage();
+      this[tiktokPageName] = tiktokPage;
+      await tiktokPage.setExtraHTTPHeaders({
+        'Accept-Language': 'en'
+      });
+
+      const savedCookies = variablesByCountry[countryCode].cookies;
+      await instagramPage.setCookie(...savedCookies);
+      await this.pageGoToHomePageInstagram(countryCode);
+    } catch(err) {
+      console.log(err?.message);
+    }
+  }
+
+  async pageGoToHomePageInstagram(countryCode) {
+    try {
+      const instagramPageName = `pageInstagram_${countryCode}`;
+      const instagramPage = this[instagramPageName];
+      await instagramPage.goto(`https://www.instagram.com/?${countryCode}`);
+    } catch(err) {
+      console.log(err?.message);
+    }
+  }
+
+  // async pageGoToHomePageTikTok(countryCode) {
+  //   try {
+  //     const instagramPageName = `pageInstagram_${countryCode}`;
+  //     const instagramPage = this[instagramPageName];
+  //     await instagramPage.goto(`https://www.instagram.com/?${countryCode}`);
+  //   } catch(err) {
+  //     console.log(err?.message);
+  //   }
+  // }
 
   async close() {
     console.log('WAITING: CLOSE BROWSER');
