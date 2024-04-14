@@ -28,7 +28,7 @@ export default class Browser {
     try {
       this.browser = await puppeteer.launch({
         executablePath,
-        headless: false,
+        headless: true,
         slowMo,
         args: ['--no-sandbox', '--lang=en-US'],
         ignoreHTTPSErrors: true
@@ -47,6 +47,7 @@ export default class Browser {
   }
 
   async openContextByCountry(countryCode) {
+    console.log('[BROWSER] - START: OPEN CONTEXT BY COUNTRY - ', countryCode);
     try {
       const contextName = `context_${countryCode}`;
       const context = await this.browser.createIncognitoBrowserContext();
@@ -54,8 +55,9 @@ export default class Browser {
 
       await this.openInstagramPage(countryCode, context);
 
-      
+      console.log('[BROWSER] - COMPLETED: OPEN CONTEXT BY COUNTRY - ', countryCode);
     } catch(err) {
+      console.log('[BROWSER] - ERROR: OPEN CONTEXT BY COUNTRY - ', countryCode);
       console.log(err?.message);
     }
   }
