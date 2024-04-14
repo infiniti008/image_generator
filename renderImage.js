@@ -22,7 +22,7 @@ async function run(page, config) {
     console.log('WAITING: TAKE A SCREENSHOT');
     const bodyHandle = await page.$('body');
 
-    await bodyHandle.screenshot({ path: config.imagePath });
+    await bodyHandle.screenshot({ path: config.imagePath, quality: 100});
 
     await bodyHandle.dispose();
 

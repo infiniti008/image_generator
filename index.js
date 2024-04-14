@@ -21,7 +21,7 @@ const app = express();
 app.use(express.json({limit: '50mb'}));
 
 app.listen(5100, () => {
-  console.log('APP LISTEN INTERNAL PORT: 5100');
+  console.log('[= SERVER =] - APP LISTEN INTERNAL PORT: 5100');
 });
 
 app.post('/api/send-stories', async function(req, res) {
