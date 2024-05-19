@@ -41,14 +41,14 @@ async function run (page, config, recorderConfig, subscription) {
 
       if (!addAudioResult) {
         await fs.promises.rename(tempFilePath, config.videoPath);
+        console.log('ADD AUDIO TO VIDEO - FAILED');
       } else {
         await fs.promises.unlink(tempFilePath);
+        console.log('ADD AUDIO TO VIDEO - COMPLETED');
       }
-
-      console.log('ADD AUDIO TO VIDEO - COMPLETED');
     }
 
-    return { completed: true, videoPath: config.videoPath };
+    return { completed: true, videoPath: config.videoPath, url: config.url};
   } catch(err) {
     console.log(err);
     console.log('ERROR: RENDER VIDEO');

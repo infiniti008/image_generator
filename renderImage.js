@@ -28,7 +28,7 @@ async function run(page, config) {
 
     console.log('COMPLET: TAKE A SCREENSHOT');
 
-    return { completed: true };
+    return { completed: true, url: config.url};
   } catch(err) {
     console.log(err);
     console.log('ERROR: RENDER IMAGE');
