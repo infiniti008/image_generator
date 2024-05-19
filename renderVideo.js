@@ -52,7 +52,7 @@ async function run (page, config, recorderConfig, subscription) {
   } catch(err) {
     console.log(err);
     console.log('ERROR: RENDER VIDEO');
-    return { completed: false, errors: [err?.message] };
+    return { completed: false, errors: [err?.message], url: config.url };
   }
 }
 
