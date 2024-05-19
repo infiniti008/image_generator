@@ -23,7 +23,9 @@ async function run (page, config, recorderConfig, subscription) {
     const recorder = new PuppeteerScreenRecorder(page, recorderConfig);
     await recorder.start(config.videoPath);
 
-    await page.waitForSelector('.video-general-wrapper.finished');
+    await page.waitForSelector('.video-general-wrapper.finished', {
+      timeout: 90000
+    });
 
     await recorder.stop();
 
