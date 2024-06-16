@@ -9,7 +9,7 @@ import fs from 'fs';
 
 const env = process.env.environment || 'prod';
 const mediaFolderPath = process.env['mediaFolderPath_' + env];
-const renderImageHost = process.env['renderImageHost_' + env] || 'https://currency.nikitenok-sl.keenetic.link/render?';
+const renderImageHost = process.env['renderImageHost_' + env] || 'http://192.168.1.42:8045/render?';
 
 async function run (page, config, recorderConfig, subscription) {
   try {
@@ -17,9 +17,16 @@ async function run (page, config, recorderConfig, subscription) {
       width: config.width,
       height: config.height
     });
+
+    console.log('WAITING: OPEN PAGE - ', config.url);
     await page.goto(config.url);
+    console.log('COMPLET: OPEN PAGE');
     
+    console.log('WAITING: WAIT FOR READY SELECTOR');
     await page.waitForSelector('.video-general-wrapper.show');
+    console.log('COMPLET: WAIT FOR READY SELECTOR');
+
+    console.log('WAITING: RECORDING VIDEO');
     const recorder = new PuppeteerScreenRecorder(page, recorderConfig);
     await recorder.start(config.videoPath);
 
@@ -28,6 +35,7 @@ async function run (page, config, recorderConfig, subscription) {
     });
 
     await recorder.stop();
+    console.log('COMPLET: RECORDING VIDEO');
 
     if (subscription.pathToAudio) {
       console.log('ADD AUDIO TO VIDEO - START');

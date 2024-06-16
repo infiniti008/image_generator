@@ -35,8 +35,8 @@ export default class Browser {
       });
       console.log('[= BROWSER =] - COMPLET: LAUNCH BROWSER');
 
-      await this.openContextByCountry('by');
-      await this.openContextByCountry('pl');
+      // await this.openContextByCountry('by');
+      // await this.openContextByCountry('pl');
 
       return this.browser;
     } catch(err) {
