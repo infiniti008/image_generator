@@ -7,7 +7,12 @@ const env = process.env.environment || 'prod';
 const renderImageHost = process.env['renderImageHost_' + env] || 'https://currency.nikitenok-sl.keenetic.link/render?';
 
 async function run(page, config) {
-  try {    
+  try {
+    await page.setViewport({
+      width: config.width,
+      height: config.height
+    });
+    
     console.log('WAITING: OPEN PAGE');
     await page.goto(config.url);
 
@@ -40,8 +45,8 @@ export async function render(browser, subscription, imagePath) {
   const url = `${renderImageHost}templateName=${subscription.template}&id=${subscription.subscriptionId}`;
   const config = {
     url,
-    width: 1080,
-    height: 1920,
+    width: parseInt(subscription.imageWidth) || 1080,
+    height: parseInt(subscription.imageHeight) || 1920,
     selector: '.container.ready',
     imagePath
   };
