@@ -13,7 +13,7 @@ import { postToInstagramReels } from './postToInstagramPost.js';
 import { postToTikTok } from './postToTikTok.js';
 import { render } from './renderImage.js';
 import { renderVideo } from './renderVideo.js';
-import { getMylioPhoto } from './getMylioPhoto.js';
+// import { getMylioPhoto } from './getMylioPhoto.js';
 import Browser from './browser.js';
 
 const browser = new Browser();
@@ -122,16 +122,16 @@ app.post('/api/render/image', async function(req, res) {
   }
 });
 
-app.get('/api/get-mylio-photo', async function(req, res) {
-  try {
-    const { url } = req.query;
-    const links = await getMylioPhoto(url);
-    res.json(links);
-  } catch (err) {
-    console.log(err);
-    res.json([]);
-  }
-});
+// app.get('/api/get-mylio-photo', async function(req, res) {
+//   try {
+//     const { url } = req.query;
+//     const links = await getMylioPhoto(url);
+//     res.json(links);
+//   } catch (err) {
+//     console.log(err);
+//     res.json([]);
+//   }
+// });
 
 function getTimezone(subscription) {
   if (subscription.country === 'by') {
