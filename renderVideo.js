@@ -3,7 +3,6 @@ dotenv.config({
   path: './.env'
 });
 
-import { PuppeteerScreenRecorder } from 'puppeteer-screen-recorder';
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 
@@ -18,22 +17,39 @@ async function run (page, config, recorderConfig, subscription) {
       height: config.height
     });
 
+    // console.log('WAITING: OPEN PAGE - ', config.url);
+    // await page.goto(config.url);
+    // console.log('COMPLET: OPEN PAGE');
+    
+    // console.log('WAITING: WAIT FOR READY SELECTOR');
+    // await page.waitForSelector('.video-general-wrapper.show');
+    // console.log('COMPLET: WAIT FOR READY SELECTOR');
+
+    // console.log('WAITING: RECORDING VIDEO');
+    // const recorder = new PuppeteerScreenRecorder(page, recorderConfig);
+    // await recorder.start(config.videoPath);
+
+    // await page.waitForSelector('.video-general-wrapper.finished', {
+    //   timeout: 90000
+    // });
+
+    // await recorder.stop();
+    // console.log('COMPLET: RECORDING VIDEO');
+
     console.log('WAITING: OPEN PAGE - ', config.url);
     await page.goto(config.url);
     console.log('COMPLET: OPEN PAGE');
-    
+
     console.log('WAITING: WAIT FOR READY SELECTOR');
     await page.waitForSelector('.video-general-wrapper.show');
     console.log('COMPLET: WAIT FOR READY SELECTOR');
 
     console.log('WAITING: RECORDING VIDEO');
-    const recorder = new PuppeteerScreenRecorder(page, recorderConfig);
-    await recorder.start(config.videoPath);
+    const recorder = await page.screencast({path: config.videoPath, size: {width: config.width, height: config.height}});
 
     await page.waitForSelector('.video-general-wrapper.finished', {
       timeout: 90000
     });
-
     await recorder.stop();
     console.log('COMPLET: RECORDING VIDEO');
 
@@ -90,7 +106,7 @@ export async function renderVideo(browser, subscription, videoPath) {
     autopad: {
       color: 'black' | '#35A5FF',
     },
-    aspectRatio: '9:16',
+    aspectRatio: subscription.width > subscription.height ? '16:9' : '9:16',
     recordDurationLimit: 100
   };
 
